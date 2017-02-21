@@ -7,8 +7,17 @@
 #include <cmath>
 #include <ctime>
 #include <vector>
+#include "Point.h"
+#include "ConsoleHandler.h"
 
 using namespace std;
+
+
+//TODO: Hide Cursor
+//TODO: Make boundaries for the screen
+//TODO: Show menu for start, and choose dificulty level
+//TODO: Show any indicator if the snake at the food space
+//TODO: Move the code into separated files
 
 #define KEY_UP 72
 #define KEY_DOWN 80
@@ -18,96 +27,19 @@ const COLORREF BCOLOR = RGB(0, 0, 0);
 const COLORREF SCOLOR = RGB(135, 206, 235);
 const COLORREF FCOLOR = RGB(218, 165, 32);
 
-RECT rcWin;
-RECT rcWnd;
-//Get a console handle
-HWND myconsole;
-//Get a handle to device context
-HDC mydc;
-
 int Moving = 1, Direction = KEY_RIGHT, FoodPositionX, FoodPositionY;
 bool FoodExists = false;
-
-
-void DrawPoint(int posX, int posY, COLORREF c)
-{
-	for (double i = posX; i < (posX + 10); i++)
-	{
-		for (int j = posY; j < (posY + 10); j++)
-		{
-			SetPixel(mydc, i, j, c);
-		}
-	}
-}
-
-struct Point
-{
-public:
-	int posX;
-	int posY;
-	COLORREF color;
-
-	Point(int x, int y, COLORREF color)
-	{
-		posX = x;
-		posY = y;
-		this->color = color;
-		this->Draw();
-	}
-
-	void Remove()
-	{
-		DrawPoint(posX, posY, BCOLOR);
-	}
-
-	void Draw()
-	{
-		DrawPoint(posX, posY, color);
-	}
-
-	void ChangePosition(int x, int y)
-	{
-		this->Remove();
-		this->posX = x;
-		this->posY = y;
-		this->Draw();
-	}
-
-	~Point()
-	{
-		//DrawPoint(posX, posY, BCOLOR);
-	}
-};
 
 vector<Point> Snake;
 
 void InitData()
 {
-	myconsole = GetConsoleWindow();
-	mydc = GetDC(myconsole);
-	HWND parWnd = GetParent(myconsole); // Get the parent window.
-	HDC parDc = GetDC(parWnd); // Get its DC.
-
-	GetWindowRect(myconsole, &rcWnd);
-
-	GetClipBox(mydc, &rcWin);
-	// Copy from parent DC.
-	BitBlt(mydc, rcWin.left, rcWin.top, rcWin.right - rcWin.left,
-		rcWin.bottom - rcWin.top, parDc, rcWnd.left, rcWnd.top, 0);
-
-	ReleaseDC(parWnd, parDc);
-	
 	srand(time(0));
 
 	// Add first two points in snake
 	Snake.push_back(Point(0, 0, SCOLOR));
 	Snake.push_back(Point(10, 0, SCOLOR));
 
-	//TODO: Hide Cursor
-	//TODO: Make boundaries for the screen
-	//TODO: Show menu for start, and choose dificulty level
-	//TODO: Show any indicator if the snake at the food space
-	//TODO: Move the code into separated files
 }
 
 void ListenForDirections(void *)
@@ -142,10 +74,10 @@ void ListenForDirections(void *)
 
 void GenerateNewFood()
 {
-	FoodPositionX = (rand() * 10) % rcWin.right;
-	FoodPositionY = (rand() * 10) % rcWin.bottom;
+	FoodPositionX = (rand() * 10) % ConsoleHandler::rcWin.right;
+	FoodPositionY = (rand() * 10) % ConsoleHandler::rcWin.bottom;
 
-	DrawPoint(FoodPositionX, FoodPositionY, FCOLOR);
+	ConsoleHandler::getInstance()->drawPoint(FoodPositionX, FoodPositionY, FCOLOR);
 
 	FoodExists = true;
 }
@@ -165,7 +97,7 @@ void CheckFood()
 			if (FoodPositionX == Snake.back().posX && FoodPositionY == Snake.back().posY)
 			{
 				// Remove existing food point
-				DrawPoint(FoodPositionX, FoodPositionY, SCOLOR);
+				ConsoleHandler::getInstance()->drawPoint(FoodPositionX, FoodPositionY, SCOLOR);
 				switch (Direction)
 				{
 				case KEY_UP:
@@ -232,7 +164,7 @@ void StartMoving()
 				DieHard();
 			break;
 		case KEY_DOWN:
-			if (Snake.back().posY < (rcWin.bottom - 10))
+			if (Snake.back().posY < (ConsoleHandler::rcWin.bottom - 10))
 			{
 				Snake.begin()->Remove();
 				Snake.erase(Snake.begin());
@@ -242,7 +174,7 @@ void StartMoving()
 				DieHard();
 			break;
 		case KEY_LEFT:
-			if (Snake.back().posX > rcWin.left)
+			if (Snake.back().posX > ConsoleHandler::rcWin.left)
 			{
 				Snake.begin()->Remove();
 				Snake.erase(Snake.begin());
@@ -252,7 +184,7 @@ void StartMoving()
 				DieHard();
 			break;
 		case KEY_RIGHT:
-			if (Snake.back().posX < (rcWin.right - 10))
+			if (Snake.back().posX < (ConsoleHandler::rcWin.right - 10))
 			{
 				Snake.begin()->Remove();
 				Snake.erase(Snake.begin());
@@ -282,7 +214,6 @@ int main()
 
 	StartMoving();
 
-	ReleaseDC(myconsole, mydc);
 
 	return 0;
 }
