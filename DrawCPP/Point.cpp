@@ -1,36 +1,64 @@
 #include "Point.h"
 #include "ConsoleHandler.h"
 
-Point::Point()
+/// <summary>
+/// Add new point with type without drawing 
+/// </summary>
+/// <param name="type">Point Type</param>
+Point::Point(PointType type)
 {
+	this->type = type;
 }
 
-Point::Point(int x, int y, COLORREF c)
+/// <summary>
+/// The public constructor that assign the point 
+/// </summary>
+/// <param name="posX">X coordinate of the point</param>
+/// <param name="posY">Y coordinate of the point</param>
+/// <param name="type">Point Type</param>
+Point::Point(int x, int y, PointType type)
 {
 	posX = x;
 	posY = y;
-	color = RGB(135, 206, 235);
+	this->type = type;
+	console = ConsoleHandler::getInstance();
 	this->Draw();
 }
 
+/// <summary>
+/// Call the draw function in the console depending on the X, Y and background type
+/// </summary>
 void Point::Remove()
 {
-	ConsoleHandler::getInstance()->drawPoint(posX, posY, RGB(0, 0, 0));
+	console->drawPoint(posX, posY, BACKGROUND);
 }
 
+/// <summary>
+/// Call the draw function in the console depending on the X, Y and point Type
+/// </summary>
 void Point::Draw()
 {
-	ConsoleHandler::getInstance()->drawPoint(posX, posY, color);
+	console->drawPoint(posX, posY, type);
 }
 
+/// <summary>
+/// Call the remove function
+/// Call the draw function with new coordinates
+/// </summary>
 void Point::ChangePosition(int x, int y)
 {
-	this->Remove();
 	this->posX = x;
 	this->posY = y;
 	this->Draw();
 }
 
-Point::~Point()
+/// <summary>
+/// Call the remove function
+/// Call the draw function with new point type
+/// </summary>
+void Point::ChangeType(PointType type)
 {
+	this->Remove();
+	this->type = type;
+	this->Draw();
 }

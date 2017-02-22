@@ -1,8 +1,3 @@
 ﻿  Source.cpp
-d:\work\library\drawcpp\drawcpp\source.cpp(89): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-d:\work\library\drawcpp\drawcpp\source.cpp(197): warning C4018: '<': signed/unsigned mismatch
-  ConsoleHandler.cpp
-d:\work\library\drawcpp\drawcpp\consolehandler.cpp(67): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  Generating Code...
   DrawCPP.vcxproj -> D:\Work\Library\DrawCPP\Debug\DrawCPP.exe
   DrawCPP.vcxproj -> D:\Work\Library\DrawCPP\Debug\DrawCPP.pdb (Full PDB)
